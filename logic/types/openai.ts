@@ -8,7 +8,7 @@ export interface continueCompletion {
     jsonParseContent?: boolean;
     message: {
       content: string;
-      role: 'user' | 'system' | 'assistant';
+      role?: 'user' | 'system' | 'assistant';
     };
     openaiConfig?: {
       frequency_penalty?: number;

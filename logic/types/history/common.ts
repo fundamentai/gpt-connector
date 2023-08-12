@@ -6,13 +6,13 @@
 export interface history {
   messages: ({
     content: string;
-    role: 'user' | 'system' | 'assistant';
+    role?: 'user' | 'system' | 'assistant';
   })[];
 }
 
 export interface message {
   content: string;
-  role: 'user' | 'system' | 'assistant';
+  role?: 'user' | 'system' | 'assistant';
 }
 
 export interface systemMessage {

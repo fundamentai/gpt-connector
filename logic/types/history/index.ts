@@ -6,7 +6,7 @@
 export interface addMessage {
   body?: {
     content: string;
-    role: 'user' | 'system' | 'assistant';
+    role?: 'user' | 'system' | 'assistant';
   };
   query?: {
     id: string;
@@ -16,7 +16,7 @@ export interface addMessage {
 export interface createHistory {
   body?: {
     content: string;
-    role: 'user' | 'system' | 'assistant';
+    role?: 'user' | 'system' | 'assistant';
   };
   query?: object;
 }
@@ -58,13 +58,13 @@ export interface getSystemMessages {
 export interface history {
   messages: ({
     content: string;
-    role: 'user' | 'system' | 'assistant';
+    role?: 'user' | 'system' | 'assistant';
   })[];
 }
 
 export interface message {
   content: string;
-  role: 'user' | 'system' | 'assistant';
+  role?: 'user' | 'system' | 'assistant';
 }
 
 export interface systemMessage {

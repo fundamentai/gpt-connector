@@ -2,7 +2,7 @@ import Joi from 'joi'
 
 export const message = Joi.object({
     content: Joi.string().required(),
-    role: Joi.allow('user', 'system', 'assistant').required()
+    role: Joi.allow('user', 'system', 'assistant').default('user')
 })
 
 export const systemMessage = Joi.object({
