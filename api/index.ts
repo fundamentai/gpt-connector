@@ -35,10 +35,14 @@ app.use((req, res, next) => {
 
 // routes
 import { router as authRouter } from './routes/auth'
-import { router as sampleRouter } from './routes/sample'
+import { router as historyRouter } from './routes/history'
+import { router as systemRouter } from './routes/system'
+import { router as openaiRouter } from './routes/openai'
 
 app.use('/auth', authRouter)
-app.use('/sample', sampleRouter)
+app.use('/history', historyRouter)
+app.use('/system', systemRouter)
+app.use('/openai', openaiRouter)
 
 // Error Handling
 app.use(status500)

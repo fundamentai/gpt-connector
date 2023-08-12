@@ -3,5 +3,5 @@
  * Do not modify this file manually
  */
 
-export * from './sample';
+export * from './openai';
 export * from './user';

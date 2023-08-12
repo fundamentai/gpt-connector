@@ -8,16 +8,17 @@
     "joi": "^17.9.2",
     "joi-objectid": "^4.0.2",
     "jsonwebtoken": "^9.0.0",
-    "morgan": "^1.10.0"
+    "morgan": "^1.10.0",
+    "openai": "^3.3.0"
   },
   "devDependencies": {
-    "@types/express-session": "^1.17.7",
     "@types/express": "^4.17.17",
+    "@types/express-session": "^1.17.7",
     "@types/jsonwebtoken": "^9.0.2",
     "@types/morgan": "^1.9.4",
     "joi-to-typescript": "^4.4.1",
-    "ts-joi-objectid": "^1.0.2",
     "nodemon": "^2.0.22",
+    "ts-joi-objectid": "^1.0.2",
     "ts-node": "^10.9.1"
   },
   "scripts": {

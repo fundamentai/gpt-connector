@@ -11,6 +11,7 @@ type config = {
 
     SESSION_SECRET: string
 
+    OPENAI_API_KEY: string
     SAMPLE_MS: string
 }
 
@@ -22,5 +23,6 @@ export const variables: config = {
     MODULE_KEY: env.MODULE_KEY,
     MODULE_NAME: env.MODULE_NAME,
     SESSION_SECRET: env.SESSION_SECRET,
+    OPENAI_API_KEY: env.OPENAI_API_KEY,
     SAMPLE_MS: env.SAMPLE_MS
 }
