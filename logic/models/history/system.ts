@@ -6,24 +6,32 @@ import { Message, SystemMessage, SystemMessageModel } from '../../../database/mo
 
 import { errorHelper } from './common'
 
+import { getHistory } from '.'
+
 import { filter } from '../../helpers/filter'
 
-export async function getSystemMessage(params: types.getSystemMessage): Promise<Message> {
+export async function getSystemMessage(params: types.getSystemMessage): Promise<Message[]> {
     params = validate(params, validators.getSystemMessage)
 
     const result = await SystemMessageModel.findOne(params.query)
     errorHelper.getError(result)
 
-    return filter(result!.toJSON(), ['_id', 'key']) as Message
+    const historyId = result!.history
+
+    return await getHistory({
+        query: {
+            id: String(historyId)
+        }
+    })
 }
 
-export async function createSystemMessage(params: types.createSystemMessage): Promise<Message> {
+export async function createSystemMessage(params: types.createSystemMessage): Promise<boolean> {
     params = validate(params, validators.createSystemMessage)
 
-    const result = await SystemMessageModel.create(params.body)
+    const result = await SystemMessageModel.create({ key: params.query.key, history: params.body.id })
     errorHelper.getError(result)
 
-    return filter(result.toObject(), ['_id', 'key'])
+    return !!result
 }
 
 export async function deleteSystemMessage(params: types.deleteSystemMessage): Promise<boolean> {
@@ -38,7 +46,7 @@ export async function deleteSystemMessage(params: types.deleteSystemMessage): Pr
 export async function updateSystemMessage(params: types.updateSystemMessage): Promise<boolean> {
     params = validate(params, validators.updateSystemMessage)
 
-    const result = await SystemMessageModel.updateOne(params.query, { $set: params.body })
+    const result = await SystemMessageModel.updateOne(params.query, { $set: { history: params.body.id } })
     errorHelper.updateError(result)
 
     return result.modifiedCount > 0

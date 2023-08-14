@@ -1,4 +1,4 @@
-import { prop, modelOptions, getModelForClass } from '@typegoose/typegoose'
+import { prop, modelOptions, getModelForClass, Ref } from '@typegoose/typegoose'
 
 @modelOptions({
     schemaOptions: { versionKey: false },
@@ -16,24 +16,20 @@ export class Message {
     schemaOptions: { versionKey: false },
     options: { allowMixed: 0 }
 })
-export class SystemMessage {
-    @prop({ required: true, unique: true })
-    public key!: string
-
+export class History {
     @prop({ required: true })
-    public content!: string
-
-    @prop({ required: true, default: 'system' })
-    public role!: 'system'
+    public messages!: Message[]
 }
-
 @modelOptions({
     schemaOptions: { versionKey: false },
     options: { allowMixed: 0 }
 })
-export class History {
-    @prop({ required: true })
-    public messages!: Message[]
+export class SystemMessage {
+    @prop({ required: true, unique: true })
+    public key!: string
+
+    @prop({ required: true, ref: History })
+    public history!: Ref<History>
 }
 
 export const HistoryModel = getModelForClass(History)

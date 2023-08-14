@@ -19,7 +19,7 @@ export async function continueCompletion(params: types.continueCompletion) {
             ).id
         )
 
-    const [messages, systemMessage] = await Promise.all([
+    const [messages, systemMessages] = await Promise.all([
         getHistory({
             query: {
                 id: historyId
@@ -32,7 +32,15 @@ export async function continueCompletion(params: types.continueCompletion) {
         })
     ])
 
-    const result = await completion({ messages: [systemMessage, ...messages, params.body!.message], ...(params.body!.openaiConfig as any) })
+    console.log({
+        systemMessages: systemMessages,
+        messages: messages,
+        last: params.body!.message
+    })
+
+    const history = !params!.query!.historyId ? [...systemMessages, ...messages] : [...systemMessages, ...messages, params.body!.message]
+
+    const result = await completion({ messages: history, ...(params.body!.openaiConfig as any) })
 
     if (params.body!.save) {
         if (params.query?.historyId) {

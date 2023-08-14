@@ -22,16 +22,16 @@ export interface createHistory {
 }
 
 export interface createSystemMessage {
-  body?: {
-    content: string;
-    key: string;
-    role?: string;
+  body: {
+    id: string;
   };
-  query?: object;
+  query: {
+    key: string;
+  };
 }
 
 export interface deleteSystemMessage {
-  query?: {
+  query: {
     key: string;
   };
 }
@@ -44,13 +44,13 @@ export interface getHistory {
 }
 
 export interface getSystemMessage {
-  query?: {
+  query: {
     key: string;
   };
 }
 
 export interface getSystemMessages {
-  query?: {
+  query: {
     key?: string;
   };
 }
@@ -74,12 +74,10 @@ export interface systemMessage {
 }
 
 export interface updateSystemMessage {
-  body?: {
-    content: string;
-    key: string;
-    role?: string;
+  body: {
+    id: string;
   };
-  query?: {
+  query: {
     key: string;
   };
 }
