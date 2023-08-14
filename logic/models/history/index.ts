@@ -11,8 +11,6 @@ import { rename, filter } from '../../helpers/filter'
 export async function getHistory(params: types.getHistory): Promise<Message[]> {
     validate(params, validators.getHistory)
 
-    console.log(rename(params.query, 'id', '_id'))
-
     const result = (await HistoryModel.findOne(rename(params.query, 'id', '_id'), { _id: 0 }))?.toObject() as History
     errorHelper.getError(result)
 

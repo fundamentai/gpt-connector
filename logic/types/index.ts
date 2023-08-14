@@ -3,5 +3,6 @@
  * Do not modify this file manually
  */
 
+export * from './interactiveChat';
 export * from './openai';
 export * from './user';

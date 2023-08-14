@@ -32,12 +32,6 @@ export async function continueCompletion(params: types.continueCompletion) {
         })
     ])
 
-    console.log({
-        systemMessages: systemMessages,
-        messages: messages,
-        last: params.body!.message
-    })
-
     const history = !params!.query!.historyId ? [...systemMessages, ...messages] : [...systemMessages, ...messages, params.body!.message]
 
     const result = await completion({ messages: history, ...(params.body!.openaiConfig as any) })
