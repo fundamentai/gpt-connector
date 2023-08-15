@@ -1,16 +1,23 @@
-import * as openaiValidators from '../validators/openai'
-import { validate } from '../helpers/validator'
-import * as types from '../types'
+import * as openaiValidators from '../../validators/openai'
+import { validate } from '../../helpers/validator'
+import * as types from '../../types'
+
+import * as chatValidators from '../../validators/interactiveChat'
 
 import { continueCompletion } from './openai'
 
 import * as functions from './functions'
 
-import { ChatCompletionResponseMessage, CreateCompletionResponseUsage } from 'openai'
+import { ChatCompletionResponseMessage, CreateCompletionResponseUsage, ChatCompletionResponseMessageRoleEnum } from 'openai'
 
 type gptRes = {
     historyId: string
-    message: ChatCompletionResponseMessage
+    message:
+        | ChatCompletionResponseMessage
+        | {
+              content: types.interactiveChatResponse
+              role: ChatCompletionResponseMessageRoleEnum
+          }
     tokens: CreateCompletionResponseUsage | undefined
 }
 
@@ -29,6 +36,12 @@ export async function trigger(completion: types.continueCompletion, gptResponse?
     }
 
     // Extract the interactive chat content from the GPT response.
+    if (typeof gptResponse.message.content !== 'string') {
+        validate(gptResponse.message.content!, chatValidators.interactiveChatResponse)
+    } else {
+        throw new Error('Invalid interactive chat response')
+    }
+
     const interactiveChat = gptResponse.message.content as types.interactiveChatResponse
 
     // Check if the response type is a 'function-call'.

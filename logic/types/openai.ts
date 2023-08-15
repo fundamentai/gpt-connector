@@ -5,6 +5,10 @@
 
 export interface continueCompletion {
   body?: {
+    infoMessage?: {
+      content: string;
+      role?: 'user' | 'system' | 'assistant';
+    };
     jsonParseContent?: boolean;
     message: {
       content: string;

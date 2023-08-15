@@ -1,7 +1,7 @@
 import { ahandler } from '../../errors/handle'
 
-import * as openai from '../../logic/models/openai'
-import * as interactiveChat from '../../logic/models/interactiveChat'
+import * as openai from '../../logic/models/chat/openai'
+import * as interactiveChat from '../../logic/models/chat/interactive'
 
 import { formatter } from './returnFormat'
 

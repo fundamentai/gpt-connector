@@ -1,10 +1,10 @@
-import * as validators from '../validators/openai'
-import { validate } from '../helpers/validator'
-import * as types from '../types/openai'
+import * as validators from '../../validators/openai'
+import { validate } from '../../helpers/validator'
+import * as types from '../../types/openai'
 
-import { completion } from '../interface/openai'
-import { getHistory, addMessage, createHistory } from './history'
-import { getSystemMessage } from './history/system'
+import { completion } from '../../interface/openai'
+import { getHistory, addMessage, createHistory } from '../history'
+import { getSystemMessage } from '../history/system'
 
 export async function continueCompletion(params: types.continueCompletion) {
     params = validate(params, validators.continueCompletion)
@@ -19,20 +19,20 @@ export async function continueCompletion(params: types.continueCompletion) {
             ).id
         )
 
-    const [messages, systemMessages] = await Promise.all([
-        getHistory({
-            query: {
-                id: historyId
-            }
-        }),
+    const [systemMessages, messages] = await Promise.all([
         getSystemMessage({
             query: {
                 key: params!.query!.systemKey
             }
+        }),
+        getHistory({
+            query: {
+                id: historyId
+            }
         })
     ])
+    // if params.body.infoMessage is not null, then add it to the history
 
-    const history = !params!.query!.historyId ? [...systemMessages, ...messages] : [...systemMessages, ...messages, params.body!.message]
 
     const result = await completion({ messages: history, ...(params.body!.openaiConfig as any) })
 
@@ -54,7 +54,9 @@ export async function continueCompletion(params: types.continueCompletion) {
     }
 
     if (params.body?.jsonParseContent) {
-        result.message.content = JSON.parse(result.message.content as string)
+        try {
+            result.message.content = JSON.parse(result.message.content as string)
+        } catch {}
     }
 
     return { ...result, historyId: historyId }

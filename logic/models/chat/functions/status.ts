@@ -1,5 +1,5 @@
-import { SessionAxios } from '../../interface/axiosSession'
-import { variables as config } from '../../../config'
+import { SessionAxios } from '../../../interface/axiosSession'
+import { variables as config } from '../../../../config'
 
 const axios = new SessionAxios({
     baseURL: config.LOGGER_MS
