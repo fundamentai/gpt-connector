@@ -31,6 +31,8 @@ type gptRes = {
  */
 export async function trigger(completion: types.continueCompletion, gptResponse?: gptRes): Promise<gptRes> {
     // If no GPT response is provided, fetch one using the given completion.
+    completion.body!.jsonParseContent = true
+
     if (!gptResponse) {
         gptResponse = await continueCompletion(completion)
     }
@@ -60,6 +62,7 @@ export async function trigger(completion: types.continueCompletion, gptResponse?
         return await trigger(completion, gptResponse)
     } else {
         // If the response type is not 'function-call', simply return the GPT response.
+        gptResponse.message.content = gptResponse.message.content?.content
         return gptResponse
     }
 }
