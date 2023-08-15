@@ -33,6 +33,9 @@ export async function continueCompletion(params: types.continueCompletion) {
     ])
     // if params.body.infoMessage is not null, then add it to the history
 
+    const history = !params!.query!.historyId
+        ? [...systemMessages, ...messages]
+        : [...systemMessages, ...messages, params.body!.message, ...(params.body!.infoMessage ? [params.body!.infoMessage] : [])]
 
     const result = await completion({ messages: history, ...(params.body!.openaiConfig as any) })
 

@@ -26,6 +26,7 @@ export var continueCompletion = Joi.object({
         }).default(),
 
         message: message.required(),
+        infoMessage: message,
         save: Joi.boolean().default(true),
         jsonParseContent: Joi.boolean().default(false)
     }).default()
