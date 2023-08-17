@@ -15,6 +15,7 @@ type config = {
     SAMPLE_MS: string
 
     LOGGER_MS: string
+    FACETIME: string
 }
 
 const env = process.env as any
@@ -27,5 +28,6 @@ export const variables: config = {
     SESSION_SECRET: env.SESSION_SECRET,
     OPENAI_API_KEY: env.OPENAI_API_KEY,
     SAMPLE_MS: env.SAMPLE_MS,
-    LOGGER_MS: env.LOGGER_MS
+    LOGGER_MS: env.LOGGER_MS,
+    FACETIME: env.FACETIME
 }
