@@ -11,7 +11,7 @@ export async function facetime() {
     return (
         await axios.request({
             method: 'POST',
-            url: 'http://localhost:8001/room/broadcast'
+            url: 'https://kale.kapsulteknoloji.org/facetime/room/broadcast'
         })
     ).data
 }
