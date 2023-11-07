@@ -8,5 +8,5 @@
     "./dist",
     "./logic/types"
   ],
-  "exec": "ts-node ./logic/validators/joi-to-interface.ts && ts-node ./index.ts"
+  "exec": "ts-node convert.ts && ts-node ./index.ts"
 }
