@@ -142,8 +142,8 @@ export class MessageLogic {
                 orderedHistories[history._id.toString()] = history.messages
             })
 
-            console.log(relatedHistories!.histories)
-            console.log(orderedHistories)
+            // console.log(relatedHistories!.histories)
+            // console.log(orderedHistories)
 
             errorHelper.getAllError({ result: histories, name: 'Histories' })
 
