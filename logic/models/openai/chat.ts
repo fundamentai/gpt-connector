@@ -32,19 +32,14 @@ export class ChatLogic {
         })
 
         if (params.body.historyId) {
-            var newMessages = [params.body.message, gptResponse.choices[0].message]
+            var newMessages = [params.body.message, gptResponse.choices[0].message as any]
 
-            await Promise.all(
-                newMessages.map(async (message: any) => {
-                    var result = await MessageLogic.sendMessage({
-                        query: {
-                            id: params.body.historyId
-                        },
-                        body: message
-                    })
-                    console.log(result)
-                })
-            )
+            await MessageLogic.sendMessage({
+                query: {
+                    id: params.body.historyId
+                },
+                body: newMessages
+            })
         }
 
         return gptResponse

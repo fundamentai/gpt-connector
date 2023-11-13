@@ -2,7 +2,7 @@ import { message, relatedHistories, base } from './common'
 import Joi from 'joi'
 
 export const sendMessage = base.keys({
-    body: message.required()
+    body: Joi.alternatives(message.required(), Joi.array().items(message.required())).required()
 })
 
 export const newRelatedHistories = base.keys({

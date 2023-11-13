@@ -69,7 +69,10 @@ export interface sendMessage {
   body: {
     content: string;
     role: 'function' | 'user' | 'system' | 'assistant';
-  };
+  } | ({
+    content: string;
+    role: 'function' | 'user' | 'system' | 'assistant';
+  })[];
   query: {
     id?: string;
   };

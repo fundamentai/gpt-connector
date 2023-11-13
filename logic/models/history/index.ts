@@ -113,7 +113,11 @@ export class MessageLogic {
             },
             {
                 $push: {
-                    messages: params.body
+                    messages: !Array.isArray(params.body)
+                        ? params.body
+                        : {
+                              $each: params.body
+                          }
                 }
             }
         )
