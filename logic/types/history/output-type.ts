@@ -9,6 +9,7 @@ export type deleteRelatedHistory = boolean;
 
 export type getMessages = ({
   content: string;
+  date?: Date;
   role: 'function' | 'user' | 'system' | 'assistant';
 })[];
 

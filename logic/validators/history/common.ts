@@ -3,7 +3,8 @@ import Joi from 'joi'
 
 export const message = Joi.object({
     content: Joi.string().required(),
-    role: Joi.string().valid('function', 'user', 'system', 'assistant').required()
+    role: Joi.string().valid('function', 'user', 'system', 'assistant').required(),
+    date: Joi.date()
 })
 
 export const history = Joi.object({

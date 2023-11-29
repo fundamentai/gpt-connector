@@ -42,6 +42,7 @@ export interface newHistory {
   body?: {
     messages: ({
       content: string;
+      date?: Date;
       role: 'function' | 'user' | 'system' | 'assistant';
     })[];
   };
@@ -68,9 +69,11 @@ export interface newRelatedHistories {
 export interface sendMessage {
   body: {
     content: string;
+    date?: Date;
     role: 'function' | 'user' | 'system' | 'assistant';
   } | ({
     content: string;
+    date?: Date;
     role: 'function' | 'user' | 'system' | 'assistant';
   })[];
   query: {

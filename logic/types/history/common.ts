@@ -16,12 +16,14 @@ export interface base {
 export interface history {
   messages: ({
     content: string;
+    date?: Date;
     role: 'function' | 'user' | 'system' | 'assistant';
   })[];
 }
 
 export interface message {
   content: string;
+  date?: Date;
   role: 'function' | 'user' | 'system' | 'assistant';
 }
 

@@ -10,6 +10,9 @@ export class Message {
 
     @prop({ required: true })
     public role!: 'function' | 'user' | 'system' | 'assistant'
+
+    @prop({ required: true })
+    public date!: Date
 }
 
 @modelOptions({

@@ -9,6 +9,7 @@ export interface completion {
     historyId?: string;
     message: {
       content: string;
+      date?: Date;
       role: 'function' | 'user' | 'system' | 'assistant';
     };
     openai?: {

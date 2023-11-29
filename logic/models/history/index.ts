@@ -114,9 +114,15 @@ export class MessageLogic {
             {
                 $push: {
                     messages: !Array.isArray(params.body)
-                        ? params.body
+                        ? {
+                              ...params.body,
+                              date: new Date()
+                          }
                         : {
-                              $each: params.body
+                              $each: params.body.map((message) => ({
+                                  ...message,
+                                  date: new Date()
+                              }))
                           }
                 }
             }
