@@ -18,9 +18,16 @@ import { MessageLogic } from '../history'
 export class ChatLogic {
     @avalidator
     static async completion(params: inputTypes.completion): Promise<outputTypes.completion> {
-        var messages = await MessageLogic.getMessages({
+        let messages = await MessageLogic.getMessages({
             query: params.query,
             body: {}
+        })
+
+        messages = messages.map((message) => {
+            return {
+                content: message.content,
+                role: message.role
+            }
         })
 
         var gptResponse = await sendRequest({

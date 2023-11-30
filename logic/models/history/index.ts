@@ -84,6 +84,35 @@ export class RelatedHistoriesLogic {
     }
 }
 
+export async function getRelatedMessages(id: string) {
+    var relatedHistories = await RelatedHistoriesModel.findOne({
+        _id: id
+    })
+
+    errorHelper.getAllError({ result: relatedHistories, name: 'Related Histories' })
+
+    var orderedHistories: any = {}
+    var histories = await HistoryModel.find({
+        _id: {
+            $in: relatedHistories!.histories
+        }
+    })
+    histories.forEach((history) => {
+        orderedHistories[history._id.toString()] = history.messages
+    })
+
+    errorHelper.getAllError({ result: histories, name: 'Histories' })
+
+    // concat messages
+    var messages: outputTypes.getMessages = []
+
+    relatedHistories!.histories.forEach((history: any) => {
+        messages = [...messages, ...orderedHistories[history]]
+    })
+
+    return messages
+}
+
 export class HistoryLogic {
     @avalidator
     static async newHistory(params: inputTypes.newHistory): Promise<outputTypes.newHistory> {
@@ -135,42 +164,29 @@ export class MessageLogic {
     @avalidator
     static async getMessages(params: inputTypes.getMessages): Promise<outputTypes.getMessages> {
         var result
-        if (params.query.relatedId) {
-            var relatedHistories = await RelatedHistoriesModel.findOne({
-                _id: params.query.relatedId
-            })
 
-            errorHelper.getAllError({ result: relatedHistories, name: 'Related Histories' })
-
-            var orderedHistories: any = {}
-            var histories = await HistoryModel.find({
-                _id: {
-                    $in: relatedHistories!.histories
-                }
-            })
-            histories.forEach((history) => {
-                orderedHistories[history._id.toString()] = history.messages
-            })
-
-            // console.log(relatedHistories!.histories)
-            // console.log(orderedHistories)
-
-            errorHelper.getAllError({ result: histories, name: 'Histories' })
-
-            // concat messages
-            var messages: outputTypes.getMessages = []
-
-            relatedHistories!.histories.forEach((history: any) => {
-                messages = [...messages, ...orderedHistories[history]]
+        if (!!params.query.relatedId && !!params.query.historyId) {
+            // get both
+            var relatedMessages = await getRelatedMessages(params.query.relatedId)
+            var historyMessages = await HistoryModel.findOne({
+                _id: params.query.historyId
             })
 
             result = {
-                messages
+                messages: [...relatedMessages, ...historyMessages!.messages]
             }
-        } else if (params.query.historyId) {
-            result = await HistoryModel.findOne({
-                _id: params.query.historyId
-            })
+        } else {
+            if (params.query.relatedId) {
+                let messages = await getRelatedMessages(params.query.relatedId)
+
+                result = {
+                    messages
+                }
+            } else if (params.query.historyId) {
+                result = await HistoryModel.findOne({
+                    _id: params.query.historyId
+                })
+            }
         }
 
         errorHelper.getAllError({ result, text: 'Messages can not read!' })

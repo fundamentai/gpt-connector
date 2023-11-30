@@ -31,7 +31,7 @@ export const getMessages = base.keys({
         relatedId: Joi.string(),
         historyId: Joi.string()
     })
-        .xor('relatedId', 'historyId')
+        .or('relatedId', 'historyId')
         .required()
 })
 

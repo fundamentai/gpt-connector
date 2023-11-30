@@ -8,7 +8,7 @@ export const completion = base.keys({
         relatedId: Joi.string(),
         historyId: Joi.string()
     })
-        .xor('relatedId', 'historyId')
+        .or('relatedId', 'historyId')
         .required(),
     body: Joi.object({
         openai: openai,
