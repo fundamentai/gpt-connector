@@ -37,6 +37,6 @@ export const getMessages = base.keys({
 
 export const newHistory = base.keys({
     body: Joi.object({
-        messages: Joi.array().items(message.required()).required()
+        messages: Joi.array().items(message).required()
     })
 })
