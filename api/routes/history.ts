@@ -2,10 +2,11 @@ import { Router } from 'express'
 
 import { HistoryController } from '../controllers/history'
 
-import { requireAcces } from '../middlewares/access'
+export const historyRouter = Router()
 
-export const router = Router()
-
-router.get('/', HistoryController.getHistory)
-router.post('/', HistoryController.createHistory)
-router.post('/message', HistoryController.addMessage)
+historyRouter.post('/send-message', HistoryController.sendMessage)
+historyRouter.post('/related', HistoryController.newRelatedHistories)
+historyRouter.put('/related', HistoryController.addRelatedHistory)
+historyRouter.delete('/related', HistoryController.deleteRelatedHistory)
+historyRouter.get('/messages', HistoryController.getMessages)
+historyRouter.post('/', HistoryController.newHistory)

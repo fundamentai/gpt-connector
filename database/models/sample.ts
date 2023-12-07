@@ -9,7 +9,7 @@ export class Sample {
     public name!: string
 
     @prop()
-    public age?: number
+    public age!: number
 }
 
 export const SampleModel = getModelForClass(Sample)

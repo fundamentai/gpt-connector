@@ -1,43 +1,39 @@
-import * as error from '../../errors/errors'
-import { ahandler } from '../../errors/handle'
+import { RelatedHistoriesLogic, MessageLogic, HistoryLogic } from '../../logic/models/history'
+import { ahandler, formatter as wrapper } from 'backend-helper-kit'
 
-import * as historyLogic from '../../logic/models/history'
+import { Request, Response, NextFunction } from 'express'
 
-import { formatter } from './returnFormat'
+const relatedFormatter = wrapper(RelatedHistoriesLogic)
+const messageFormatter = wrapper(MessageLogic)
+const historyFormatter = wrapper(HistoryLogic)
+
+type status = {
+    continue: boolean
+    next: boolean
+}
 
 export class HistoryController {
     @ahandler
-    static async getHistory(req: any, res: any) {
-        res.json(
-            formatter(
-                await historyLogic.getHistory({
-                    query: req.query
-                })
-            )
-        )
-    }
+    @messageFormatter
+    static async sendMessage(req: Request, res: Response, next: NextFunction): Promise<status | void> {}
 
     @ahandler
-    static async createHistory(req: any, res: any) {
-        res.json(
-            formatter(
-                await historyLogic.createHistory({
-                    query: req.query,
-                    body: req.body
-                })
-            )
-        )
-    }
+    @messageFormatter
+    static async getMessages(req: Request, res: Response, next: NextFunction): Promise<status | void> {}
 
     @ahandler
-    static async addMessage(req: any, res: any) {
-        res.json(
-            formatter(
-                await historyLogic.addMessage({
-                    query: req.query,
-                    body: req.body
-                })
-            )
-        )
-    }
+    @historyFormatter
+    static async newHistory(req: Request, res: Response, next: NextFunction): Promise<status | void> {}
+
+    @ahandler
+    @relatedFormatter
+    static async newRelatedHistories(req: Request, res: Response, next: NextFunction): Promise<status | void> {}
+
+    @ahandler
+    @relatedFormatter
+    static async addRelatedHistory(req: Request, res: Response, next: NextFunction): Promise<status | void> {}
+
+    @ahandler
+    @relatedFormatter
+    static async deleteRelatedHistory(req: Request, res: Response, next: NextFunction): Promise<status | void> {}
 }

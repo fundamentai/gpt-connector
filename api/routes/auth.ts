@@ -1,13 +1,11 @@
 import { Router } from 'express'
-
-//Require controllers
 import { Auth } from '../controllers/auth'
-//Initilaziation
-const router = Router()
+
+const authRouter = Router()
 
 //Routes
-router.get('/check', Auth.check)
-router.post('/login', Auth.login)
-router.get('/logout', Auth.logout)
+authRouter.get('/check', Auth.check)
+authRouter.post('/login', Auth.login)
+authRouter.get('/logout', Auth.logout)
 
-export { router }
+export { authRouter }

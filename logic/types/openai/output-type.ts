@@ -3,6 +3,4 @@
  * Do not modify this file manually
  */
 
-export * from './common';
-export * from './input-type';
-export * from './output-type';
+export type completion = any;

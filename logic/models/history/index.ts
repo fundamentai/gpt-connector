@@ -1,35 +1,196 @@
-import * as validators from '../../validators/history'
-import { validate } from '../../helpers/validator'
-import * as types from '../../types/history/'
+import * as inputTypes from '../../types/history/input-type'
+import * as outputTypes from '../../types/history/output-type'
 
-import { History, HistoryModel, Message } from '../../../database/models/history'
+import * as inputValidators from '../../validators/history/input-type'
+import * as outputValidators from '../../validators/history/output-type'
 
-import { errorHelper } from './common'
+import { variables } from '../../../config'
 
-import { rename, filter } from '../../helpers/filter'
+import { ErrorHelper, avalidator as wrapper } from 'backend-helper-kit'
 
-export async function getHistory(params: types.getHistory): Promise<Message[]> {
-    validate(params, validators.getHistory)
+import { HistoryModel, RelatedHistoriesModel } from '../../../database/models/history'
 
-    const result = (await HistoryModel.findOne(rename(params.query, 'id', '_id'), { _id: 0 }))?.toObject() as History
-    errorHelper.getError(result)
+const avalidator = wrapper(inputValidators, outputValidators, variables)
+const errorHelper = new ErrorHelper(__filename)
 
-    return result.messages
-}
-export async function createHistory(params: types.createHistory): Promise<{ id: string }> {
-    validate(params, validators.createHistory)
+async function checkHistoryIdIsAvailable(id: string): Promise<boolean> {
+    var result = await HistoryModel.findOne({
+        _id: id
+    })
 
-    const result = await HistoryModel.create({ messages: [params.body] })
-    errorHelper.getError(result)
-
-    return rename(filter(result!.toObject(), ['messages']), '_id', 'id') as { id: string }
+    errorHelper.getAllError({ result, text: `History not found! ${id}` })
+    return !!result
 }
 
-export async function addMessage(params: types.addMessage): Promise<boolean> {
-    validate(params, validators.addMessage)
+export class RelatedHistoriesLogic {
+    @avalidator
+    static async newRelatedHistories(params: inputTypes.newRelatedHistories): Promise<outputTypes.newRelatedHistories> {
+        if (params.body.histories.length !== 0) {
+            var err: string = ''
+            await Promise.all(
+                params.body.histories.map(async (historyId) => {
+                    await checkHistoryIdIsAvailable(historyId)
+                })
+            )
 
-    const result = await HistoryModel.updateOne(rename(params.query, 'id', '_id'), { $push: { messages: params.body } })
-    errorHelper.updateError(result)
+            if (err !== '') {
+                throw new Error(err)
+            }
+        }
 
-    return result.modifiedCount > 0
+        var result = await RelatedHistoriesModel.create(params.body)
+
+        errorHelper.createError({ result, name: 'Related Histories' })
+        return result._id.toString()
+    }
+
+    @avalidator
+    static async addRelatedHistory(params: inputTypes.addRelatedHistory): Promise<outputTypes.addRelatedHistory> {
+        checkHistoryIdIsAvailable(params.body.historyId)
+
+        var result = await RelatedHistoriesModel.updateOne(
+            {
+                _id: params.query.relatedId
+            },
+            {
+                $push: {
+                    histories: {
+                        $each: [params.body.historyId],
+                        $position: params.body.insert
+                    }
+                }
+            }
+        )
+
+        errorHelper.updateError({ result, name: 'Related Histories' })
+        return result.modifiedCount === 1
+    }
+
+    @avalidator
+    static async deleteRelatedHistory(params: inputTypes.deleteRelatedHistory): Promise<outputTypes.deleteRelatedHistory> {
+        var result = await RelatedHistoriesModel.updateOne(
+            {
+                _id: params.query.relatedId
+            },
+            {
+                $pull: {
+                    histories: params.query.historyId
+                }
+            }
+        )
+
+        errorHelper.updateError({ result, name: 'Related Histories' })
+        return result.modifiedCount === 1
+    }
+}
+
+export async function getRelatedMessages(id: string) {
+    var relatedHistories = await RelatedHistoriesModel.findOne({
+        _id: id
+    })
+
+    errorHelper.getAllError({ result: relatedHistories, name: 'Related Histories' })
+
+    var orderedHistories: any = {}
+    var histories = await HistoryModel.find({
+        _id: {
+            $in: relatedHistories!.histories
+        }
+    })
+    histories.forEach((history) => {
+        orderedHistories[history._id.toString()] = history.messages
+    })
+
+    errorHelper.getAllError({ result: histories, name: 'Histories' })
+
+    // concat messages
+    var messages: outputTypes.getMessages = []
+
+    relatedHistories!.histories.forEach((history: any) => {
+        messages = [...messages, ...orderedHistories[history]]
+    })
+
+    return messages
+}
+
+export class HistoryLogic {
+    @avalidator
+    static async newHistory(params: inputTypes.newHistory): Promise<outputTypes.newHistory> {
+        var result = await HistoryModel.create(params.body)
+
+        errorHelper.createError({ result, name: 'History' })
+        return result._id.toString()
+    }
+}
+
+export class MessageLogic {
+    @avalidator
+    static async sendMessage(params: inputTypes.sendMessage): Promise<outputTypes.sendMessage> {
+        if (!params.query.id) {
+            var newHistory = (
+                await HistoryModel.create({
+                    messages: []
+                })
+            ).toObject()
+
+            errorHelper.createError({ result: newHistory, text: 'Chat can not be created!' })
+        }
+
+        var result = await HistoryModel.updateOne(
+            {
+                _id: params.query.id || newHistory!._id
+            },
+            {
+                $push: {
+                    messages: !Array.isArray(params.body)
+                        ? {
+                              ...params.body,
+                              date: new Date()
+                          }
+                        : {
+                              $each: params.body.map((message) => ({
+                                  ...message,
+                                  date: new Date()
+                              }))
+                          }
+                }
+            }
+        )
+
+        errorHelper.updateError({ result, text: 'Message can not sent!' })
+        return params.query.id ? true : newHistory!._id.toString()
+    }
+
+    @avalidator
+    static async getMessages(params: inputTypes.getMessages): Promise<outputTypes.getMessages> {
+        var result
+
+        if (!!params.query.relatedId && !!params.query.historyId) {
+            // get both
+            var relatedMessages = await getRelatedMessages(params.query.relatedId)
+            var historyMessages = await HistoryModel.findOne({
+                _id: params.query.historyId
+            })
+
+            result = {
+                messages: [...relatedMessages, ...historyMessages!.messages]
+            }
+        } else {
+            if (params.query.relatedId) {
+                let messages = await getRelatedMessages(params.query.relatedId)
+
+                result = {
+                    messages
+                }
+            } else if (params.query.historyId) {
+                result = await HistoryModel.findOne({
+                    _id: params.query.historyId
+                })
+            }
+        }
+
+        errorHelper.getAllError({ result, text: 'Messages can not read!' })
+
+        return result?.messages!
+    }
 }

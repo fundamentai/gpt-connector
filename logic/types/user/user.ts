@@ -3,6 +3,10 @@
  * Do not modify this file manually
  */
 
-export * from './common';
-export * from './input-type';
-export * from './output-type';
+export interface login {
+  token: string;
+}
+
+export interface user {
+  permissions?: any;
+}

@@ -1,33 +1,42 @@
-import * as dotenv from 'dotenv'
+import { validate } from 'backend-helper-kit'
+import Joi from 'joi'
 
-dotenv.config()
+import { config } from 'dotenv'
 
-type config = {
+config()
+const env: configType = process.env as any
+
+type configType = {
     PORT: number
     MONGO_CONNECTION: string
-
     MODULE_NAME: string
     MODULE_KEY: string
-
     SESSION_SECRET: string
-
-    OPENAI_API_KEY: string
     SAMPLE_MS: string
-
-    LOGGER_MS: string
-    FACETIME: string
+    ENV: string
 }
 
-const env = process.env as any
+const configSchema = Joi.object({
+    PORT: Joi.number().required(),
+    MONGO_CONNECTION: Joi.string().required(),
+    MODULE_NAME: Joi.string().required(),
+    MODULE_KEY: Joi.string().required(),
+    SESSION_SECRET: Joi.string().required(),
+    SAMPLE_MS: Joi.string().uri().required(),
+    ENV: Joi.string().valid('development', 'production').required()
+})
 
-export const variables: config = {
-    PORT: env.PORT,
-    MONGO_CONNECTION: env.MONGO_CONNECTION,
-    MODULE_KEY: env.MODULE_KEY,
-    MODULE_NAME: env.MODULE_NAME,
-    SESSION_SECRET: env.SESSION_SECRET,
-    OPENAI_API_KEY: env.OPENAI_API_KEY,
-    SAMPLE_MS: env.SAMPLE_MS,
-    LOGGER_MS: env.LOGGER_MS,
-    FACETIME: env.FACETIME
-}
+export var variables = validate(
+    {
+        PORT: env.PORT,
+        MONGO_CONNECTION: env.MONGO_CONNECTION,
+        MODULE_KEY: env.MODULE_KEY,
+        MODULE_NAME: env.MODULE_NAME,
+        SESSION_SECRET: env.SESSION_SECRET,
+        SAMPLE_MS: env.SAMPLE_MS,
+        ENV: env.ENV
+    },
+    configSchema
+) as configType
+
+console.log(variables)

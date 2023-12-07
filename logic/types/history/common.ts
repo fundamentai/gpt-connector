@@ -3,20 +3,30 @@
  * Do not modify this file manually
  */
 
+export interface base {
+  body: object;
+  query: {
+    id?: string;
+  };
+  user?: {
+    permissions?: any;
+  };
+}
+
 export interface history {
   messages: ({
     content: string;
-    role?: 'user' | 'system' | 'assistant';
+    date?: Date;
+    role: 'function' | 'user' | 'system' | 'assistant';
   })[];
 }
 
 export interface message {
   content: string;
-  role?: 'user' | 'system' | 'assistant';
+  date?: Date;
+  role: 'function' | 'user' | 'system' | 'assistant';
 }
 
-export interface systemMessage {
-  content: string;
-  key: string;
-  role?: string;
+export interface relatedHistories {
+  histories: string[];
 }
