@@ -23,6 +23,7 @@ export interface continueCompletion {
       model?: string;
       n?: number;
       presence_penalty?: number;
+      response_format?: any;
       stop?: object;
       stream?: boolean;
       temperature?: number;

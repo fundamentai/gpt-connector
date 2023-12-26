@@ -22,7 +22,8 @@ export var continueCompletion = Joi.object({
             presence_penalty: Joi.number().min(-2).max(2),
             frequency_penalty: Joi.number().min(-2).max(2),
             logit_bias: Joi.object(),
-            user: Joi.string()
+            user: Joi.string(),
+            response_format: Joi.any()
         }).default(),
 
         message: message.required(),
